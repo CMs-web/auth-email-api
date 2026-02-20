@@ -20,9 +20,12 @@
   "description": "",
   "dependencies": {
     "@supabase/supabase-js": "^2.97.0",
+    "bullmq": "^5.0.0",
     "cors": "^2.8.6",
-    "crypto": "^1.0.1",
     "dotenv": "^17.3.1",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "express-rate-limit": "^7.0.0",
+    "ioredis": "^5.0.0",
+    "resend": "^4.0.0"
   }
 }
