@@ -31,9 +31,10 @@ const connection = new IORedis(process.env.UPSTASH_REDIS_URL, {
 const worker = new Worker(
   'email-jobs',
   async (job) => {
-    const { log_id, to, type, subject, token, name, custom_html, from_email, from_name } = job.data;
+    const { log_id, to, type, subject, redirect_url, name, custom_html, from_email, from_name } = job.data;
 
     console.log(`[Job ${job.id}] Processing: ${type} → ${to}`);
+    console.log("inside workers", redirect_url);
 
     // Build email content
     let emailContent;
@@ -42,7 +43,7 @@ const worker = new Worker(
     } else {
       const templateFn = templates[type];
       if (!templateFn) throw new Error(`Unknown email type: ${type}`);
-      emailContent = templateFn({ to, token, name, from_name });
+      emailContent = templateFn({ to, redirect_url, name, from_name });
     }
 
     // Send via Resend

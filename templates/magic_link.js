@@ -1,4 +1,5 @@
-module.exports = function magicLinkTemplate({ token, name, from_name }) {
+module.exports = function magicLinkTemplate({ redirect_url, name, from_name }) {
+    console.log("inside magic_link", redirect_url);
   return {
     subject: `Your sign-in link`,
     html: `<!DOCTYPE html>
@@ -22,9 +23,9 @@ module.exports = function magicLinkTemplate({ token, name, from_name }) {
       <p style="color:#3f3f46; font-size:16px; margin-top:0;">Hi${name ? ' ' + name : ''},</p>
       <p style="color:#3f3f46; font-size:16px;">Click the button below to sign in. This link expires in <strong>15 minutes</strong>.</p>
       <div style="text-align:center;">
-        <a href="${token}" class="btn">Sign In</a>
+        <a href="${redirect_url}" class="btn">Sign In</a>
       </div>
-      <p style="color:#71717a; font-size:13px; word-break:break-all;">Or paste this link: ${token}</p>
+      <p style="color:#71717a; font-size:13px; word-break:break-all;">Or paste this link: ${redirect_url}</p>
       <p style="color:#71717a; font-size:14px;">If you didn't request this, ignore this email.</p>
     </div>
     <div class="footer">This email was sent by ${from_name}. Do not reply.</div>

@@ -17,14 +17,18 @@ const supabase = require('../lib/supabase');
  *     to: "user@example.com",
  *     type: "otp" | "magic_link" | "password_reset" | "welcome" | "custom",
  *     subject: "Your OTP Code",       // required for type=custom
- *     token: "123456",               // for otp/magic_link/password_reset
+ *     redirect_url: "https://example.com/auth?token=test1234",               // for otp/magic_link/password_reset
  *     name: "John",                  // optional — personalisation
  *     custom_html: "<p>...</p>"      // required for type=custom
  *   }
  */
 router.post('/', authenticate, checkQuota, async (req, res) => {
+  if (!req.body || Object.keys(req.body).length === 0) {
+    return res.status(400).json({ error: "Empty request body. Make sure Content-Type is application/json" });
+}
   try {
-    const { to, type = 'custom', subject, token, name, custom_html } = req.body;
+    const { to, type = 'custom', subject, redirect_url, name, custom_html, from_name } = req.body;
+    console.log(req.body);
 
     // --- Validation ---
     if (!to || !to.includes('@')) {
@@ -36,8 +40,8 @@ router.post('/', authenticate, checkQuota, async (req, res) => {
     if (type === 'custom' && (!subject || !custom_html)) {
       return res.status(400).json({ error: 'For type=custom, `subject` and `custom_html` are required.' });
     }
-    if (['otp', 'magic_link', 'password_reset'].includes(type) && !token) {
-      return res.status(400).json({ error: `\`token\` is required for type=${type}.` });
+    if (['otp', 'magic_link', 'password_reset'].includes(type) && !redirect_url) {
+      return res.status(400).json({ error: `\`redirect_url\` is required for type = ${type}.` });
     }
 
     // --- Idempotency Check ---
@@ -87,11 +91,11 @@ router.post('/', authenticate, checkQuota, async (req, res) => {
       to,
       type,
       subject: subject || null,
-      token: token || null,
+      redirect_url: redirect_url || null,
       name: name || null,
       custom_html: custom_html || null,
       from_email: process.env.FROM_EMAIL || 'noreply@yourdomain.com',
-      from_name: process.env.FROM_NAME || 'EmailAPI'
+      from_name: from_name || 'Generate Auth'
     });
 
     // --- Respond instantly ---

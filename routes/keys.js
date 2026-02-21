@@ -11,6 +11,7 @@ const { generateApiKey, hashKey } = require('../lib/hash');
  * This route uses Supabase Auth JWT — NOT the API key.
  */
 router.post('/generate', async (req, res) => {
+  console.log ('Generating new API key...')
   try {
     const authHeader = req.headers['authorization'];
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
